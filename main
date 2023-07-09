@@ -1,0 +1,152 @@
+#include <stdio.h>
+#include <string.h>
+
+int main(void) {
+  char nome[10][30];
+  char nomeCadastrado[30];
+  char sexo[10];
+  float valorTotalCompra[10];
+  char option;
+  int contM = 0;
+  int contF = 0;
+  int compNome = 0;
+  int compNomeLista = 0;
+  float valorCompras = 0;
+  float valorTotalCompraHomens = 0;
+  float valorTotalCompraTodos = 0;
+  float mediaDasComprasTodos = 0;
+  float somaDasCompras = 0;
+  float compraMaisBarata = 0;
+ 
+  for (int i = 0; i < 3; i++) {  //TEM O NOME REGISTRADO NO VETOR I
+    printf("\nNome do cliente %d: ", i+1);
+    scanf("%s", nome[i]);  
+
+    do {
+      for (int j = 0; j < i; j++) {
+        // COMPARA VETOR NOME[I] COM VETOR NOME[J]
+        compNome = strcmp(nome[i], nome[j]);
+       
+        if (compNome == 0) {
+          printf("Nome inválido, digite novamente: ");
+          scanf("%s", nome[i]);
+          j= -1; // QUANDO O LOOP FOR INCREMENTAR O J, COMO ELE É NEGATIVO, AO SER INCREMENTADO VAI SER 0, COMEÇA DO NOME[0] A COMPARAÇÃO
+        }
+      }
+    }while (compNome == 1); //strings forem iguais comp == 0, se nao, do-while
+   
+    //TEM O SEXO REGISTRADO NO VETOR I
+    printf("Digite seu sexo. m ou f, cliente %d: ", i+1);
+    scanf(" %c", &sexo[i]);
+       
+    //IMPEDIR QUE SEXO SEJA DIFERENTE DE M OU F
+    if (sexo[i] != 'm' && sexo[i] != 'f') {
+      //MOSTRAR ERRO E PERGUNTAR NOVAMENTE
+      do  {
+        printf("Sexo inválido, digite m ou f  cliente %d: ", i+1);
+        scanf(" %c", &sexo[i]);
+      }while (sexo[i] != 'm' && sexo[i] != 'f');
+    }
+    printf("Digite o valor total da compra do cliente %d: ", i+1);
+    scanf("%f", &valorTotalCompra[i]);
+    //BLOQUEAR VALOR SEJA NEGATIVO
+    if (valorTotalCompra[i] < 0.0) {
+      //MOSTRAR ERRO E PERGUNTAR NOVAMENTE
+      do  {
+        printf("ERRO Digite o valor total da compra do cliente %d: ", i+1);
+        scanf("%f", &valorTotalCompra[i]);
+      }while (valorTotalCompra[i] < 0.0);
+    }
+   
+    //SE NÃO HOUVER ERRO, MOSTRAR MENSAGEM DE SUCESSO
+    if (valorTotalCompra[i] > 0 && (sexo[i] == 'm' || sexo[i] == 'f')){
+      printf("\nCadastrado com sucesso!!\n");
+    }
+
+     //CONTAR NUMERO DE HOMENS E MULHERES
+    if (sexo[i] == 'm') {
+      contM++;
+      valorTotalCompraHomens += valorTotalCompra[i]; // SOMA COMPRA DE TODOS OS HOMENS
+    } else if (sexo[i] == 'f') {
+      contF++;
+    }
+    // COMPRA MAIS BARATA
+    if (compraMaisBarata == 0.0) {
+      compraMaisBarata = valorTotalCompra[i];
+    } else if (valorTotalCompra[i] < compraMaisBarata) {
+      compraMaisBarata = valorTotalCompra[i];
+    }
+    somaDasCompras += valorTotalCompra[i]; // VALOR TOTAL DE TODAS AS COMPRAS
+  }
+   mediaDasComprasTodos = somaDasCompras / 3; // MEDIA DAS COMPRAS
+
+  //MENU DE NAVEGAÇÃO
+    do {
+    printf("\n--------------------------------------------------------------\n");
+    printf("\nMenu de navegação\n");
+    printf("\n1 - Ver informações de compras de um cliente específico\n");
+    printf("2 - Ver informações de todos os produtos cadastrados\n");
+    printf("3 - Encerrar o programa\n");
+    //ESCOLHER DE OPÇÃO PARA CONTINUAR OU ENCERRAR
+    printf("Digite a opção escolhida: ");
+    scanf(" %c", &option);
+       
+    if(option == '1') {
+      printf("\nDigite o nome do cliente: ");
+      scanf("%s", nomeCadastrado); // DIGITAR UM NOME PARA ATRIBUIR E COMPARAR EM NOME[I]
+     
+      int listado = 0;
+     
+      for (int i = 0; i < 3; i++) {
+        compNomeLista = strcmp(nomeCadastrado, nome[i]); // VARIAVEL PARA COMPARAR NOME
+        if (compNomeLista == 0) { // SE COMPARAÇÃO FOR 0, EXISTE UM NOME CADASTRADO EM NOME[I], RETORNARÁ SEXO E TOTAL DE COMPRAS
+          printf("Sexo: %c\n", sexo[i]);
+          printf("Compras do cliente: %.2f \n", valorTotalCompra[i]);
+          listado = 1; // SE LISTADO == 1, CLIENTE ESTA EM NOME[I]
+        }
+      }
+      if (listado != 1) { // SE LISTADO = 0, NAO HÁ CLIENTES COM ESSE NOME, FORA DO FOR PARA NAO MOSTRAR MAIS VEZES
+        printf("Cliente nao cadastrado, não há compras nesse nome\n");
+      }
+    }
+     
+    //MOSTRAR NOME DAS COMPRAS
+    else if (option == '2') {
+      int comprasAbaixo = 0; // IMPEDIR QUE O VALOR SEJA DUPLICADO AO ENTRAR NOVAMENTE NA OPÇÃO 2
+      int comprasAcima = 0; // IMPEDIR QUE O VALOR SEJA DUPLICADO AO ENTRAR NOVAMENTE NA OPÇÃO 2
+      printf("\nDigite um valor de compras: ");
+      scanf("%f", &valorCompras);
+     
+      printf("\n");
+     
+      for (int i = 0; i < 3; i++) {
+        if (valorTotalCompra[i] > valorCompras ) {
+           comprasAcima++;
+        }
+        if (valorTotalCompra[i] < valorCompras ) {
+           comprasAbaixo++;
+        }
+      }
+      printf("Compras abaixo do valor: %d\n", comprasAbaixo); // MOSTRA QUANTIDADE DE COMPRAS ABAIXO DO VALOR
+      printf("Compras acima do valor: %d\n", comprasAcima);// MOSTRA QUANTIDADE DE COMPRAS ACIMA DO VALOR          
+      printf("Quantidade de compradoras mulheres: %d\n", contF); // MOSTRA A QUANTIDADE DE COMPRAS POR MULHERES
+      printf("Valor total comprado pelos homens: %.2f\n", valorTotalCompraHomens);      
+      printf("Exibir o valor total das compras: %.2f\n", somaDasCompras);      
+      printf("Exibir o valor médio de compras: %.2f\n", mediaDasComprasTodos);      
+      printf("Exibir o valor da compra mais barata: %.2f\n", compraMaisBarata);
+    }
+    //ENCERRA O PROGRAMA E SAI
+    else if (option == '3') {
+      option = 'n';
+    } else {
+      printf("Opção inválida\n");
+    }
+ 
+    //OPÇÃO PARA VOLTAR AO MENU E PRINT NA TELA
+    if (option != 'n') {
+      printf("\nDeseja voltar ao menu s ou n?");
+      scanf(" %c", &option);
+    }
+  }while (option != 'n');
+   printf("\n\nPrograma encerrado, obrigado!");
+}
